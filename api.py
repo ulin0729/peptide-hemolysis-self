@@ -29,13 +29,16 @@ def padding_seq(sequences_dict, length=50, pad_value='X'):
     return ret
 
 def PC6_encoding(data):
-    ret={}
+    ret = {}
+    conc = {}
     for key in data.keys():
         integer_encoded = []
+        div = data[key]['conc']/300
         for amino in data[key]['seq']:
-            integer_encoded += (pc6_table[amino]+[data[key]['conc']])
+            integer_encoded += (pc6_table[amino]+[div])
         ret[key]=integer_encoded
-    return ret
+        conc[key]=data[key]['conc']
+    return ret,conc
 
 if __name__ == '__main__':
     # argument parser
@@ -77,27 +80,27 @@ if __name__ == '__main__':
         for col in descriptions[1:]:
             if col.startswith('Conc='):
                 try:
-                    new_row['conc'] = np.float32(col[5:])/300
+                    new_row['conc'] = np.float32(col[5:])
                     if new_row['conc'] <= 0 or new_row['conc'] > 300:
-                        print(f'Concentration of {ID} is not a number in (0,300], using default 50 ug/ml')
-                        new_row['conc'] = np.float32(50)/300
+                        new_row['conc'] = np.float32(50)
                     else:
                         break
                 except ValueError:
-                    print(f'Concentration of {ID} is not a number in (0,300], using default 50 ug/ml')
-                    new_row['conc'] = np.float32(50)/300
+                    new_row['conc'] = np.float32(50)
         else:
-            new_row['conc'] = np.float32(50)/300
+            new_row['conc'] = np.float32(50)
         if len(new_row['seq']) > 50:
-            print(f'Length of {ID} is greater than 50, cropping it into first 50 amino acids.')
+            # print(f'Length of {ID} is greater than 50, cropping it into first 50 amino acids.')
             new_row['seq'] = new_row['seq'][:50]
         sequences_dict[ID] = new_row
     
     padded_dict = padding_seq(sequences_dict)
-    encoded_dict = PC6_encoding(padded_dict)
+    encoded_dict, conc_dict = PC6_encoding(padded_dict)
     df = pd.DataFrame(encoded_dict).T
+    conc_df = pd.DataFrame(conc_dict, index=[0]).T
     prediction = clf.predict(df.values) # actual prediction
     df['pred'] = prediction
+    df['conc'] = conc_df
     df = df.drop(range(0,350), axis=1)
     df.to_csv(args.output_csv, header=False)
     
