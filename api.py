@@ -89,9 +89,9 @@ if __name__ == '__main__':
                     new_row['conc'] = np.float32(50)
         else:
             new_row['conc'] = np.float32(50)
-        if len(new_row['seq']) > 50:
-            # print(f'Length of {ID} is greater than 50, cropping it into first 50 amino acids.')
-            new_row['seq'] = new_row['seq'][:50]
+        # if len(new_row['seq']) > 50:
+        #     # print(f'Length of {ID} is greater than 50, cropping it into first 50 amino acids.')
+        #     new_row['seq'] = new_row['seq'][:50]
         sequences_dict[ID] = new_row
     
     padded_dict = padding_seq(sequences_dict)
