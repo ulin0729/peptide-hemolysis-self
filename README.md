@@ -20,7 +20,5 @@ The sequences in the input file should be in the following fasta format:
 `>ID|Conc={concentration}
 XXX......XXX`
 
-The concentration is limited to (0,300] ug/ml. If the input concentration is not in this range, the default 50 ug/ml will be used instead.
-
-The length of input sequence is limited to 50. For sequences longer than 50, the system will crop them into first 50 amino acids.
+The concentration is limited to (0,300] ug/ml. If the input concentration is not in this range, the maximum 300 ug/ml will be used instead.
 

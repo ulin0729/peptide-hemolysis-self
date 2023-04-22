@@ -81,8 +81,10 @@ if __name__ == '__main__':
             if col.startswith('Conc='):
                 try:
                     new_row['conc'] = np.float32(col[5:])
-                    if new_row['conc'] <= 0 or new_row['conc'] > 300:
+                    if new_row['conc'] <= 0:
                         new_row['conc'] = np.float32(50)
+                    elif new_row['conc'] > 300:
+                        new_row['conc'] = np.float32(300)
                     else:
                         break
                 except ValueError:
